@@ -1,0 +1,67 @@
+version: "3.1"
+
+services:
+  service-one:
+    networks:
+      - some-network
+      - some-other-network
+      - third-network
+    environment:
+    - SOME_URL=thing:12345
+    - SPRING_PROFILES_ACTIVE=yay,hooray,woo
+    - RUBY_OPTS=-Xmx160M -Xms160M
+    deploy:
+      mode: replicated
+      replicas: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+      restart_policy:
+        condition: any
+        delay: 1m
+        window: 120s
+      placement:
+        constraints:
+        - node.role == worker
+      labels:
+      - com.something.foo=partytime
+      - edge.port=8080
+      - edge.enable=true
+      - edge.rule=Host:yeahdude;
+      - edge.docker.network=third-network
+  service-two:
+      networks:
+        - some-network
+        - some-other-network
+        - third-network
+      environment:
+      - SOME_URL=thing:12345
+      - SPRING_PROFILES_ACTIVE=yay,hooray,woo
+      - RUBY_OPTS=-Xmx160M -Xms160M
+      deploy:
+        mode: replicated
+        replicas: 3
+        update_config:
+          parallelism: 2
+          delay: 10s
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1G
+        restart_policy:
+          condition: any
+          delay: 1m
+          window: 120s
+        placement:
+          constraints:
+          - node.role == worker
+        labels:
+        - com.something.foo=partytime
+        - edge.port=8080
+        - edge.enable=true
+        - edge.rule=Host:yeahdude;
+        - edge.docker.network=third-network

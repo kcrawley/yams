@@ -1,0 +1,9 @@
+a: Easy! as one two three
+b:
+  c: things
+  d: whatever
+things:
+ thing1:
+  cat: 'fred'
+ thing2:
+  cat: 'sam'

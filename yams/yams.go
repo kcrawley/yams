@@ -358,9 +358,18 @@ func write(cmd *cobra.Command, filename string, updatedData interface{}) error {
 	return nil
 }
 
-// Update a property in the yaml file.
+// WriteScript: Update a yaml file with the commands in the script.
+func WriteScript(filename string, writeScript string) error {
+	updatedData, err := updateYamlScript(filename, writeScript, "", "")
+	if err != nil {
+		return err
+	}
+	return writeFileInPlace(filename, updatedData)
+}
+
+// WriteProperty: Update a yaml file with the given key and value
 func WriteProperty(filename string, key string, value string) error {
-	updatedData, err := updateYamlScript(filename, key, value)
+	updatedData, err := updateYamlScript(filename, "", key, value)
 	if err != nil {
 		return err
 	}
@@ -448,10 +457,17 @@ func updateYaml(args []string) (interface{}, error) {
 	return updateParsedData(parsedData, writeCommands, prependCommand)
 }
 
-func updateYamlScript(filepath string, key string, value string) (interface{}, error) {
+func updateYamlScript(filepath string, writeScript string, key string, value string) (interface{}, error) {
+	var writeCommands yaml.MapSlice
 	var prependCommand = ""
-	writeCommands := make(yaml.MapSlice, 1)
-	writeCommands[0] = yaml.MapItem{Key: key, Value: parseValue(value)}
+	if writeScript != "" {
+		if err := readData(writeScript, &writeCommands); err != nil {
+			return nil, err
+		}
+	} else {
+		writeCommands = make(yaml.MapSlice, 1)
+		writeCommands[0] = yaml.MapItem{Key: key, Value: parseValue(value)}
+	}
 
 	var parsedData yaml.MapSlice
 	if err := readData(filepath, &parsedData); err != nil {

@@ -19,7 +19,6 @@ func entryInSlice(context yaml.MapSlice, key interface{}) *yaml.MapItem {
 }
 
 func writeMap(context interface{}, paths []string, value interface{}) yaml.MapSlice {
-	log.Debugf("writeMap for %v for %v with value %v\n", paths, context, value)
 
 	var mapSlice yaml.MapSlice
 	switch context.(type) {
@@ -38,14 +37,10 @@ func writeMap(context interface{}, paths []string, value interface{}) yaml.MapSl
 		newChild := yaml.MapItem{Key: paths[0]}
 		mapSlice = append(mapSlice, newChild)
 		child = entryInSlice(mapSlice, paths[0])
-		log.Debugf("\tAppended child at %v for mapSlice %v\n", paths[0], mapSlice)
 	}
-
-	log.Debugf("\tchild.Value %v\n", child.Value)
 
 	remainingPaths := paths[1:]
 	child.Value = updatedChildValue(child.Value, remainingPaths, value)
-	log.Debugf("\tReturning mapSlice %v\n", mapSlice)
 	return mapSlice
 }
 
@@ -65,7 +60,6 @@ func updatedChildValue(child interface{}, remainingPaths []string, value interfa
 }
 
 func writeArray(context interface{}, paths []string, value interface{}) []interface{} {
-	log.Debugf("writeArray for %v for %v with value %v\n", paths, context, value)
 	var array []interface{}
 	switch context.(type) {
 	case []interface{}:
@@ -77,8 +71,6 @@ func writeArray(context interface{}, paths []string, value interface{}) []interf
 	if len(paths) == 0 {
 		return array
 	}
-
-	log.Debugf("\tarray %v\n", array)
 
 	rawIndex := paths[0]
 	var index int64
@@ -98,11 +90,8 @@ func writeArray(context interface{}, paths []string, value interface{}) []interf
 	}
 	currentChild := array[index]
 
-	log.Debugf("\tcurrentChild %v\n", currentChild)
-
 	remainingPaths := paths[1:]
 	array[index] = updatedChildValue(currentChild, remainingPaths, value)
-	log.Debugf("\tReturning array %v\n", array)
 	return array
 }
 
